@@ -1,5 +1,6 @@
 class restic::client::config (
   String $dir = '/etc/restic',
+  String $dir_mode = '0750',
   String $config_path = "${dir}/restic.conf",
   String $password_file_path = "${dir}/restic.pass",
   String $template = 'restic/etc/restic.conf.epp',
@@ -13,11 +14,11 @@ class restic::client::config (
     ensure => directory,
     owner  => $owner,
     group  => $group,
-    mode   => '0750',
+    mode   => $dir_mode,
   }
 
   file { $config_path:
-    ensure => directory,
+    ensure => file,
     owner  => $owner,
     group  => $group,
     mode   => $mode,
@@ -30,7 +31,7 @@ class restic::client::config (
   }
 
   file { $password_file_path:
-    ensure    => directory,
+    ensure    => file,
     owner     => $owner,
     group     => $group,
     mode      => $mode,
