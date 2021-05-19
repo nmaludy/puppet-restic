@@ -1,0 +1,10 @@
+<%-|
+  String $variables,
+|-%>
+# This file is managed by Puppet. Local changes will be overwritten and lost.
+
+<%- $variables.each |$key, $value| { %>
+<%- if $value { %>
+<%= $key %>="<%= $value %>"
+<%- } -%>
+<%- } -%>
