@@ -10,6 +10,7 @@ class restic::server::rest (
   String $config_group = 'restsvr',
   String $config_mode = '0600',
   String $config_template = 'restic/etc/sysconfig/rest-server.epp',
+  String $path_mode = '0750',
   # --append-only enable append only mode
   Optional[Boolean] $append_only = undef,
   # --cpu-profile write CPU profile to file
@@ -100,7 +101,7 @@ class restic::server::rest (
       ensure => directory,
       owner  => $config_owner,
       group  => $config_group,
-      mode   => '0750',
+      mode   => $path_mode,
       notify => Service[$service_name],
     }
   }
@@ -156,7 +157,10 @@ class restic::server::rest (
       path    => ['/usr/bin', '/sbin', '/bin'],
       command => "htpasswd -B -b '${htpasswd_file_path}' '${u}' '${p}'",
       unless  => "htpasswd -B -b -v '${htpasswd_file_path}' '${u}' '${p}'",
-      require => Package[$htpasswd_package],
+      require => [
+        Package[$htpasswd_package],
+        File[$htpasswd_file_path],
+      ]
     }
   }
 }
