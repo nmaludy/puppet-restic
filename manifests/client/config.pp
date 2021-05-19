@@ -23,8 +23,8 @@ class restic::client::config (
     mode   => $mode,
     content => epp($template, {
       variables => {
-        RESTIC_REPOSITORY => $default_repo,
-        RESTIC_PASSWORD_FILE => $password_file_path,
+        'RESTIC_REPOSITORY' => $default_repo,
+        'RESTIC_PASSWORD_FILE' => $password_file_path,
       },
     }),
   }
