@@ -74,7 +74,7 @@ class restic::server::rest (
     }
   }
   # convert to argument strings and join with space
-  $args_str = $set_args.map |$k, $v| { "$k $v" }.join(' ')
+  $server_args = $set_args.map |$k, $v| { "$k $v" }.join(' ')
   file { $config_path:
     ensure => file,
     owner  => $config_owner,
