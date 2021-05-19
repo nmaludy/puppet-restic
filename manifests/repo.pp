@@ -14,10 +14,13 @@ class restic::repo (
       gpgkey              => 'https://download.copr.fedorainfracloud.org/results/copart/restic/pubkey.gpg',
       repo_gpgcheck       => '0',
       enabled             => '1',
-      enabled_metadata    => '1',
     }
+
+    # yumrepo doesn't support all of the settings we need for this repo, add the extra settings
+    # by themselves
     $settings_hash = {
       'type' => 'rpm-md',
+      'enabled_metadata' => '1',
     }
     $settings_hash.each |$setting, $value| {
       ini_setting { "${repo_path}:${repo_name}:${setting}":
