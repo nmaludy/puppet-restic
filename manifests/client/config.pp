@@ -1,7 +1,11 @@
+# Sets up a config file with environment variables for some common restic options
+#
+# Also configures the restic password file that will be used for authenticated repositories.
+#
 class restic::client::config (
   String $dir = '/etc/restic',
   String $dir_mode = '0750',
-  String $config_path = "${dir}/restic.conf",
+  String $config_path = "${dir}/restic.env",
   String $password_file_path = "${dir}/restic.pass",
   String $template = 'restic/etc/restic.conf.epp',
   String $mode = '0600',
