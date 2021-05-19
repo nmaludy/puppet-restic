@@ -6,9 +6,9 @@ class restic::server::rest (
   String $service_ensure = 'running',
   Boolean $service_enable = true,
   String $config_path = '/etc/sysconfig/rest-server',
-  String $config_owner = 'root',
-  String $config_group = 'root',
-  String $config_mode = '0644',
+  String $config_owner = 'restsvr',
+  String $config_group = 'restsvr',
+  String $config_mode = '0600',
   String $config_template = 'restic/etc/sysconfig/rest-server.epp',
   # --append-only enable append only mode
   Optional[Boolean] $append_only = undef,
@@ -43,6 +43,11 @@ class restic::server::rest (
   String $firewall_service = 'rest-server',
   String $firewall_ensure = 'present',
   String $firewall_zone = 'public',
+  # user => password
+  Hash $users = {},
+  String $htpasswd_package = 'http-tools',
+  String $htpasswd_file_path = "${path}/.htpasswd",
+  String $htpasswd_file_mode = $config_mode,
 ) inherits restic::server {
   if !defined(Package[$package_name]) {
     package { $package_name:
@@ -102,6 +107,45 @@ class restic::server::rest (
     firewalld_service { $firewall_service:
       ensure => $firewall_ensure,
       zone   => $firewall_zone,
+    }
+  }
+
+  if !defined(Package[$htpasswd_package]) {
+    package { $htpasswd_package:
+      ensure  => $package_ensure,
+      require => Class['restic::repo'],
+    }
+  }
+
+  file { $htpasswd_file_path:
+    ensure => file,
+    owner  => $config_owner,
+    group  => $config_group,
+    mode   => $htpasswd_file_mode,
+  }
+  $users.each |$u, $p| {
+    # -c  Create a new file.
+    # -n  Don't update file; display results on stdout.
+    # -b  Use the password from the command line rather than prompting for it.
+    # -i  Read password from stdin without verification (for script usage).
+    # -m  Force MD5 encryption of the password (default).
+    # -2  Force SHA-256 crypt() hash of the password (secure).
+    # -5  Force SHA-512 crypt() hash of the password (secure).
+    # -B  Force bcrypt aencryption of the password (very secure).
+    # -C  Set the computing time used for the bcrypt algorithm
+    #     (higher is more secure but slower, default: 5, valid: 4 to 31).
+    # -r  Set the number of rounds used for the SHA-256, SHA-512 algorithms
+    #     (higher is more secure but slower, default: 5000).
+    # -d  Force CRYPT encryption of the password (8 chars max, insecure).
+    # -s  Force SHA-1 encryption of the password (insecure).
+    # -p  Do not encrypt the password (plaintext, insecure).
+    # -D  Delete the specified user.
+    # -v  Verify password for the specified user.
+    exec { "restic REST server user: $u":
+      path    => ['/usr/bin', '/sbin', '/bin'],
+      command => "htpasswd -B -b '${htpasswd_file_path}' '${u}' '${p}'",
+      unless  => "htpasswd -B -b -v '${htpasswd_file_path}' '${u}' '${p}'",
+      require => Package[$htpasswd_package],
     }
   }
 }
