@@ -5,7 +5,8 @@ class restic::client::install (
 ) inherits restic::client {
   if !defined(Package[$package_name]) {
     package { $package_name:
-      ensure => $package_ensure,
+      ensure  => $package_ensure,
+      require => Class['restic::repo'],
     }
   }
 }

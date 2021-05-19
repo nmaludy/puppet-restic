@@ -6,9 +6,7 @@ class restic (
   Boolean $server = false,
   Boolean $repo_manage = true,
 ) {
-  if $repo_manage {
-    contain restic::repo
-  }
+  contain restic::repo
   if $client {
     contain restic::client
   }

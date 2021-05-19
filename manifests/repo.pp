@@ -1,5 +1,7 @@
-class restic::repo {
-  if $facts['os']['family'] == 'RedHat' {
+class restic::repo (
+  Boolean $manage = $restic::repo_manage,
+) inherits restic {
+  if $manage and $facts['os']['family'] == 'RedHat' {
     $repo_path = '/etc/yum.repos.d/copart-restic-epel.repo'
     $repo_section = 'copr:copr.fedorainfracloud.org:copart:restic'
     $os_maj = $facts['os']['release']['major']
