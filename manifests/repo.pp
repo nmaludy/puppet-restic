@@ -25,6 +25,7 @@ class restic::repo {
       ini_setting { "${repo_path}:${repo_section}:${setting}":
         ensure  => present,
         path    => $repo_path,
+        section => $repo_section,
         setting => $setting,
         value   => $value,
       }
