@@ -9,6 +9,7 @@ class restic::server::rest (
   String $config_owner = 'root',
   String $config_group = 'root',
   String $config_mode = '0644',
+  String $config_template = 'restic/etc/sysconfig/rest-server.epp',
   # --append-only enable append only mode
   Optional[Boolean] $append_only = undef,
   # --cpu-profile write CPU profile to file
@@ -79,7 +80,7 @@ class restic::server::rest (
     owner  => $config_owner,
     group  => $config_group,
     mode   => $config_mode,
-    content => epp($template, {
+    content => epp($config_template, {
       server_args => $server_args,
     }),
   }
