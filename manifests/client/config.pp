@@ -12,8 +12,9 @@ class restic::client::config (
   String $owner = 'root',
   String $group = 'root',
   Optional[String] $password = undef,
+  Optional[String] $repo_password = $restic::client::repo_password,
   Optional[String] $default_repo = undef,
-) {
+) inherits restic::client {
   file { $dir:
     ensure => directory,
     owner  => $owner,
@@ -40,6 +41,6 @@ class restic::client::config (
     group     => $group,
     mode      => $mode,
     show_diff => false,
-    content   => "$password\n",
+    content   => "$repo_password\n",
   }
 }
