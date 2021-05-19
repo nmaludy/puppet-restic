@@ -1,0 +1,8 @@
+<%-|
+  String $server_args,
+|-%>
+# This file is managed by Puppet. Local changes will be overwritten and lost.
+# Settings for the rest-server daemon.
+
+#Arguments passed to rest-server daemon, see https://github.com/restic/rest-server
+SERVERARGS="<%= $server_args %>"
