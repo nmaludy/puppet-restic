@@ -40,9 +40,9 @@ class restic::server::rest (
   # format is '--arg-name' => 'value'
   Hash $extra_args = {},
   Boolean $firewall_manage = true,
-  Boolean $firewall_service = 'rest-server',
-  Boolean $firewall_ensure = 'present',
-  Boolean $firewall_zone = 'public',
+  String $firewall_service = 'rest-server',
+  String $firewall_ensure = 'present',
+  String $firewall_zone = 'public',
 ) inherits restic::server {
   if !defined(Package[$package_name]) {
     package { $package_name:
