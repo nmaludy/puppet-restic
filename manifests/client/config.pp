@@ -7,7 +7,7 @@ class restic::client::config (
   String $dir_mode = '0750',
   String $config_path = "${dir}/restic.env",
   String $password_file_path = "${dir}/restic.pass",
-  String $template = 'restic/etc/restic.conf.epp',
+  String $template = 'restic/etc/restic/restic.env.epp',
   String $mode = '0600',
   String $owner = 'root',
   String $group = 'root',
