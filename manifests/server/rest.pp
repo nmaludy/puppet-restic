@@ -4,7 +4,7 @@ class restic::server::rest (
   String $package_ensure = 'present',
   String $service_name = 'rest-server',
   String $service_ensure = 'running',
-  Boolean $service_enabl = true,
+  Boolean $service_enable = true,
   String $config_path = '/etc/sysconfig/rest-server',
   String $config_owner = 'root',
   String $config_group = 'root',
@@ -39,6 +39,10 @@ class restic::server::rest (
   # override or add additional arguments
   # format is '--arg-name' => 'value'
   Hash $extra_args = {},
+  Boolean $firewall_manage = true,
+  Boolean $firewall_service = 'rest-server',
+  Boolean $firewall_ensure = 'present',
+  Boolean $firewall_zone = 'public',
 ) inherits restic::server {
   if !defined(Package[$package_name]) {
     package { $package_name:
@@ -91,6 +95,13 @@ class restic::server::rest (
       enable    => $service_enable,
       require   => Package[$package_name],
       subscribe => File[$config_path],
+    }
+  }
+
+  if $firewall_manage {
+    firewalld_service { $firewall_service:
+      ensure => $firewall_ensure,
+      zone   => $firewall_zone,
     }
   }
 }
