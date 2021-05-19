@@ -94,6 +94,17 @@ class restic::server::rest (
     }),
   }
 
+  # create the share directory
+  if $path {
+    file { $path:
+      ensure => directory,
+      owner  => $config_owner,
+      group  => $config_group,
+      mode   => '0750',
+      notify => Service[$service_name],
+    }
+  }
+
   if !defined(Service[$service_name]) {
     service { $service_name:
       ensure    => $service_ensure,
