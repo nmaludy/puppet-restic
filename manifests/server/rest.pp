@@ -1,16 +1,18 @@
 # Installs the restic REST server
 class restic::server::rest (
-  String $package_name = 'rest-server',
-  String $package_ensure = 'present',
-  String $service_name = 'rest-server',
-  String $service_ensure = 'running',
-  Boolean $service_enable = true,
-  String $config_path = '/etc/sysconfig/rest-server',
-  String $config_owner = 'restsvr',
-  String $config_group = 'restsvr',
-  String $config_mode = '0600',
-  String $config_template = 'restic/etc/sysconfig/rest-server.epp',
-  String $path_mode = '0750',
+  String $package_name = $restic::params::server_rest_package_name,
+  String $package_ensure = $restic::params::server_rest_package_ensure,
+  String $service_name = $restic::params::server_rest_service_name,
+  String $service_ensure = $restic::params::server_rest_service_ensure,
+  Boolean $service_enable = $restic::params::server_rest_service_enable,
+  String $user = $restic::params::server_rest_user,
+  String $group = $restic::params::server_rest_group,
+  String $config_path = $restic::params::server_rest_config_path,
+  String $config_owner = $user,
+  String $config_group = $group,
+  String $config_mode = $restic::params::server_rest_config_mode,
+  String $config_template = $restic::params::server_rest_config_template,
+  String $path_mode = $restic::params::server_rest_path_mode,
   # --append-only enable append only mode
   Optional[Boolean] $append_only = undef,
   # --cpu-profile write CPU profile to file
@@ -26,7 +28,7 @@ class restic::server::rest (
   # --no-auth              disable .htpasswd authentication
   Optional[Boolean] $no_auth =  undef,
   # --path              data directory (default "/tmp/restic")
-  Optional[String] $path = '/tmp/restic',
+  Optional[String] $path = $restic::params::server_rest_path,
   # --private-repos        users can only access their private repo
   Optional[Boolean] $private_repos = undef,
   # --prometheus           enable Prometheus metrics
@@ -40,13 +42,13 @@ class restic::server::rest (
   # override or add additional arguments
   # format is '--arg-name' => 'value'
   Hash $extra_args = {},
-  Boolean $firewall_manage = true,
-  String $firewall_service = 'rest-server',
-  String $firewall_ensure = 'present',
-  String $firewall_zone = 'public',
+  Boolean $firewall_manage = $restic::params::server_rest_firewall_manage,
+  String $firewall_service = $restic::params::server_rest_firewall_service,
+  String $firewall_ensure = $restic::params::server_rest_firewall_ensure,
+  String $firewall_zone = $restic::params::server_rest_firewall_zone,
   # user => password
   Hash $users = {},
-  String $htpasswd_package = 'httpd-tools',
+  String $htpasswd_package = $restic::params::server_rest_firewall_package,
   String $htpasswd_file_path = "${path}/.htpasswd",
   String $htpasswd_file_mode = $config_mode,
 ) inherits restic::server {
