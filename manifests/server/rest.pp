@@ -48,7 +48,7 @@ class restic::server::rest (
   String $firewall_zone = $restic::params::server_rest_firewall_zone,
   # user => password
   Hash $users = {},
-  String $htpasswd_package = $restic::params::server_rest_firewall_package,
+  String $htpasswd_package = $restic::params::server_rest_htpasswd_package,
   String $htpasswd_file_path = "${path}/.htpasswd",
   String $htpasswd_file_mode = $config_mode,
 ) inherits restic::server {
