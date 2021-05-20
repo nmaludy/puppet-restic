@@ -109,7 +109,7 @@ class restic::server::rest (
 
     # initialize the restic repo
     exec { "restic - init ${path}":
-      command => 'source /etc/restic/restic.env && restic init',
+      command => '. /etc/restic/restic.env && restic init',
       path    => ['/usr/bin', '/sbin', '/bin'],
       creates => "${path}/config",
       require => [
