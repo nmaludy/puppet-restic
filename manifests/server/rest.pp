@@ -106,6 +106,18 @@ class restic::server::rest (
       mode   => $path_mode,
       notify => Service[$service_name],
     }
+
+    # initialize the restic repo
+    exec { "restic - init ${path}":
+      command => 'source /etc/restic/restic.env && restic init',
+      path    => ['/usr/bin', '/sbin', '/bin'],
+      creates => "${path}/config",
+      require => [
+        File[$path],
+        File['/etc/restic/restic.env'],
+      ],
+      before  => Service[$service_name],
+    }
   }
 
   if !defined(Service[$service_name]) {
