@@ -23,11 +23,12 @@ class restic::client::config (
   }
 
   file { $config_path:
-    ensure => file,
-    owner  => $owner,
-    group  => $group,
-    mode   => $mode,
-    content => epp($template, {
+    ensure    => file,
+    owner     => $owner,
+    group     => $group,
+    mode      => $mode,
+    show_diff => false,
+    content   => epp($template, {
       variables => {
         'RESTIC_REPOSITORY' => $repo,
         'RESTIC_PASSWORD_FILE' => $password_file_path,
