@@ -117,7 +117,7 @@ class restic::server::rest (
         File[$path],
         File['/etc/restic/restic.env'],
       ],
-      before   => Service[$service_name],
+      notify   => Service[$service_name],
     }
   }
 
