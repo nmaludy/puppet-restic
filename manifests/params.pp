@@ -7,6 +7,7 @@ class restic::params {
   $client = true
   $client_package_name = 'restic'
   $client_package_ensure = 'present'
+  $client_repo = undef
   $client_repo_password = undef
 
   # server

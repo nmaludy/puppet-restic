@@ -12,8 +12,8 @@ class restic::client::config (
   String $owner = 'root',
   String $group = 'root',
   Optional[String] $password = undef,
+  Optional[String] $repo = $restic::client::repo,
   Optional[String] $repo_password = $restic::client::repo_password,
-  Optional[String] $default_repo = undef,
 ) inherits restic::client {
   file { $dir:
     ensure => directory,
@@ -29,7 +29,7 @@ class restic::client::config (
     mode   => $mode,
     content => epp($template, {
       variables => {
-        'RESTIC_REPOSITORY' => $default_repo,
+        'RESTIC_REPOSITORY' => $repo,
         'RESTIC_PASSWORD_FILE' => $password_file_path,
       },
     }),
