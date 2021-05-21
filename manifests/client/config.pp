@@ -5,6 +5,8 @@
 class restic::client::config (
   String $dir = '/etc/restic',
   String $dir_mode = '0750',
+  String $pre_dir = "${dir}/pre.d",
+  String $post_dir = "${dir}/post.d",
   String $config_path = "${dir}/restic.env",
   String $template = 'restic/etc/restic/restic.env.epp',
   String $password_file_path = "${dir}/restic.pass",
@@ -19,7 +21,7 @@ class restic::client::config (
   Array[String] $excludes = $restic::client::excludes,
   String $log_dir = '/var/log/restic',
 ) inherits restic::client {
-  file { [$dir, $log_dir]:
+  file { [$dir, $log_dir, $pre_dir, $post_dir]:
     ensure => directory,
     owner  => $owner,
     group  => $group,
