@@ -78,7 +78,7 @@ restic backup --verbose \
        --exclude-file <%= $excludes_path %> \
 <%- } -%>
 <%- if $extra_args { -%>
-       $extra_args \
+       <%= $extra_args %> \
 <%- } -%>
-       $$backup_path
+       <%= $backup_path %>
 executeScriptsInDir "$POST_DIR"
