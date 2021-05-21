@@ -6,16 +6,20 @@ class restic::client::config (
   String $dir = '/etc/restic',
   String $dir_mode = '0750',
   String $config_path = "${dir}/restic.env",
-  String $password_file_path = "${dir}/restic.pass",
   String $template = 'restic/etc/restic/restic.env.epp',
+  String $password_file_path = "${dir}/restic.pass",
   String $mode = '0600',
   String $owner = 'root',
   String $group = 'root',
   Optional[String] $password = undef,
   Optional[String] $repo = $restic::client::repo,
   Optional[String] $repo_password = $restic::client::repo_password,
+  String $excludes_path = "${dir}/excludes.txt",
+  String $excludes_template = 'restic/etc/restic/excludes.txt.epp',
+  Array[String] $excludes = $restic::client::excludes,
+  String $log_dir = '/var/log/restic',
 ) inherits restic::client {
-  file { $dir:
+  file { [$dir, $log_dir]:
     ensure => directory,
     owner  => $owner,
     group  => $group,
@@ -43,5 +47,13 @@ class restic::client::config (
     mode      => $mode,
     show_diff => false,
     content   => "$repo_password\n",
+  }
+
+  file { $excludes_path:
+    ensure  => file,
+    owner   => $owner,
+    group   => $group,
+    mode    => $mode,
+    content => epp($excludes_template, { excludes => $excludes }),
   }
 }

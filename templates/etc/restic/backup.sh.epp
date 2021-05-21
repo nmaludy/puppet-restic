@@ -1,0 +1,85 @@
+<%-|
+  String $backup_path,
+  String $config_path,
+  Optional[String] $excludes_path = undef,
+  Optional[String] $extra_args = undef,
+|-%>
+#!/bin/bash
+set -e
+
+# ----------------------------------------------------------------
+# Function for exit due to fatal program error
+#   Accepts 1 argument:
+#     string containing descriptive error message
+# Reference: This was copied from <http://www.linuxcommand.org/wss0150.php>
+#
+# Example call of the error_exit function.  Note the inclusion
+# of the LINENO environment variable.  It contains the current
+# line number.
+#
+# echo "Example of error with line number and message"
+# errorExit "$LINENO: An error has occurred."
+#----------------------------------------------------------------
+function errorExit
+{
+  local PROGNAME=$(basename $0)
+  echo "${PROGNAME}: ERROR: ${1:-"Unknown Error"}" 1>&2
+  exit 1
+}
+export -f errorExit
+
+# ----------------------------------------------------------------
+# Function for exit if the last executed command's return code != 0
+#   Accepts 1 argument:
+#     a string to be printed on exit
+#----------------------------------------------------------------
+function exitIfLastError
+{
+  if [[ $? -ne 0 ]]; then
+    errorExit "$1"
+  fi
+}
+export -f exitIfLastError
+
+# ----------------------------------------------------------------
+# Function to execute all .sh scripts in a directory (example pre.d)
+#   Accepts 1 argument:
+#     path to directory where scripts live
+#----------------------------------------------------------------
+function executeScriptsInDir
+{
+  DIR=$1
+  if [[ -d ${DIR} ]]; then
+    # executes the command inside ``, then splits the output by newline
+    # and adds each the lines to the array as a separate element
+    SCRIPTS=(`find ${DIR} -mindepth 1 -name "*.sh"`| tr ' ' '\n' | sort);
+
+    # Execute each script in order
+    for SCRIPT in ${SCRIPTS[@]}; do
+      # executes the script
+      $SCRIPT
+      # check the return code of the script
+      exitIfLastError "$LINENO: ERROR: Executing script (${SCRIPT}) failed!"
+    done
+  fi
+}
+export -f executeScriptsInDir
+
+
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PRE_DIR="$SCRIPT_DIR/pre.d"
+POST_DIR="$SCRIPT_DIR/post.d"
+
+# source our config variables so the restic command below gets the right options
+source <%= $config_path %>
+
+executeScriptsInDir "$PRE_DIR"
+restic backup --verbose \
+<%- if $excludes_path { -%>
+       --exclude-file <%= $excludes_path %> \
+<%- } -%>
+<%- if $extra_args { -%>
+       $extra_args \
+<%- } -%>
+       $$backup_path
+executeScriptsInDir "$POST_DIR"
