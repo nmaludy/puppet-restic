@@ -66,6 +66,6 @@ class restic::client::config (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => epp($template),
+    content => epp($logrotate_template),
   }
 }
