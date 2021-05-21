@@ -18,6 +18,7 @@ define restic::client::backup (
   String $cron_date    = '*',
   String $cron_month   = '*',
   String $cron_weekday = '*',
+  Array[String] $cron_env = [],
 ) {
   if $extra_args =~ Array[String] {
     $_extra_args = $extra_args.join(' ')
@@ -42,13 +43,14 @@ define restic::client::backup (
 
   if $manage_cron {
     cron::job { "restic_${name}":
-      ensure  => present,
-      command => "${script_path} 2>&1 >> ${log_path}",
-      minute  => $cron_minute,
-      hour    => $cron_hour,
-      date    => $cron_date,
-      month   => $cron_month,
-      weekday => $cron_weekday,
+      ensure      => present,
+      command     => "${script_path} 2>&1 | tee -a ${log_path}",
+      environment => $cron_env,
+      minute      => $cron_minute,
+      hour        => $cron_hour,
+      date        => $cron_date,
+      month       => $cron_month,
+      weekday     => $cron_weekday,
     }
   }
 }
