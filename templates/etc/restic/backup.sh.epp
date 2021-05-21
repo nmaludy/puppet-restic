@@ -45,7 +45,7 @@ export -f exitIfLastError
 #   Accepts 1 argument:
 #     path to directory where scripts live
 #----------------------------------------------------------------
-function executeScriptsInDirnnn
+function executeScriptsInDir
 {
   DIR=$1
   if [[ -d ${DIR} ]]; then
