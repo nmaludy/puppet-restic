@@ -20,6 +20,8 @@ class restic::client::config (
   String $excludes_template = 'restic/etc/restic/excludes.txt.epp',
   Array[String] $excludes = $restic::client::excludes,
   String $log_dir = '/var/log/restic',
+  String $logrotate_path = '/etc/logrotate.d/restic',
+  String $logrotate_template = 'restic/etc/logrotate.d/restic.epp',
 ) inherits restic::client {
   file { [$dir, $log_dir, $pre_dir, $post_dir]:
     ensure => directory,
@@ -57,5 +59,13 @@ class restic::client::config (
     group   => $group,
     mode    => $mode,
     content => epp($excludes_template, { excludes => $excludes }),
+  }
+
+  file { $logrotate_path:
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => epp($template),
   }
 }
