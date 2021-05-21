@@ -5,7 +5,6 @@
   Optional[String] $extra_args = undef,
 |-%>
 #!/bin/bash
-set -e
 
 # ----------------------------------------------------------------
 # Function for exit due to fatal program error
@@ -46,13 +45,13 @@ export -f exitIfLastError
 #   Accepts 1 argument:
 #     path to directory where scripts live
 #----------------------------------------------------------------
-function executeScriptsInDir
+function executeScriptsInDirnnn
 {
   DIR=$1
   if [[ -d ${DIR} ]]; then
     # executes the command inside ``, then splits the output by newline
     # and adds each the lines to the array as a separate element
-    SCRIPTS=(`find ${DIR} -mindepth 1 -name "*.sh"`| tr ' ' '\n' | sort);
+    SCRIPTS=($(find ${DIR} -mindepth 1 -name "*.sh" | tr ' ' '\n' | sort));
 
     # Execute each script in order
     for SCRIPT in ${SCRIPTS[@]}; do

@@ -4,7 +4,7 @@
 #
 class restic::client::config (
   String $dir = '/etc/restic',
-  String $dir_mode = '0750',
+  String $dir_mode = '0755',
   String $pre_dir = "${dir}/pre.d",
   String $post_dir = "${dir}/post.d",
   String $config_path = "${dir}/restic.env",
