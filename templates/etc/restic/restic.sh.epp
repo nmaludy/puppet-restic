@@ -1,0 +1,9 @@
+<%-|
+  String $args,
+  String $config_path,
+|-%>
+#!/bin/bash
+
+# source our config variables so the restic command below gets the right options
+source <%= $config_path %>
+restic <%= $args %>
