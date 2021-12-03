@@ -8,7 +8,10 @@ define restic::server::snapshot_cleanup (
   Optional[Integer] $keep_yearly   = undef,
   Optional[String]  $keep_within   = undef,
   Optional[String]  $keep_tag      = undef,
+  Optional[String]  $repo          = undef,
+  Optional[Variant[Array[String], String]] $global_args = undef,
   Optional[Variant[Array[String], String]] $extra_args = undef,
+  Boolean $prune          = true,
   String $owner           = 'root',
   String $group           = 'root',
   String $mode            = '0750',
@@ -26,13 +29,23 @@ define restic::server::snapshot_cleanup (
   String $cron_weekday    = '*',
   Array[String] $cron_env = [],
 ) {
+  if $global_args =~ Array[String] {
+    $_global_args = $global_args.join(' ')
+  }
+  else {
+    $_global_args = $global_args
+  }
   if $extra_args =~ Array[String] {
     $_extra_args = $extra_args.join(' ')
   }
   else {
     $_extra_args = $extra_args
   }
-  $args = {
+
+  $global_args_hash = {
+    '--repo' => $repo,
+  }
+  $args_hash = {
     '--keep-last'    => $keep_last,
     '--keep-hourly'  => $keep_hourly,
     '--keep-daily'   => $keep_daily,
@@ -42,7 +55,8 @@ define restic::server::snapshot_cleanup (
     '--keep-within'  => $keep_within,
     '--keep-tag'     => $keep_tag,
   }
-  $args_arr = $args.reduce([]) |$memo, $a| {
+
+  $global_args_arr = $global_args_hash.reduce([]) |$memo, $a| {
     $flag = $a[0]
     $value = $a[1]
     if $value {
@@ -52,7 +66,18 @@ define restic::server::snapshot_cleanup (
       $memo
     }
   }
-  $args_str = ($args_arr + [$extra_args]).join(' ')
+  $args_arr = $args_hash.reduce([]) |$memo, $a| {
+    $flag = $a[0]
+    $value = $a[1]
+    if $value {
+      $memo + [$flag, $value]
+    }
+    else {
+      $memo
+    }
+  }
+  $args_str = ($args_arr + $global_args_arr + [$_extra_args]).join(' ')
+  $prune_args_str = ($global_args_arr).join(' ')
 
   file { $script_path:
     ensure    => file,
@@ -63,6 +88,8 @@ define restic::server::snapshot_cleanup (
     content   => epp($template, {
       args        => $args_str,
       config_path => $config_path,
+      prune       => $prune,
+      prune_args  => $prune_args_str,
     }),
   }
 

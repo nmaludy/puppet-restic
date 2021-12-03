@@ -1,6 +1,8 @@
 <%- |
   String $config_path,
   String $args = '',
+  Boolean $prune = true,
+  String $prune_args = '',
 | -%>
 #!/bin/sh
 
@@ -14,3 +16,8 @@ RESTIC_SNAPSHOT_HOSTS=$(restic snapshots --json | jq '.[].hostname' | sort | uni
 for RESTIC_HOST in $RESTIC_SNAPSHOT_HOSTS; do
   restic forget --host "$RESTIC_HOST" <%= $args %>
 done
+
+<%- if $prune { -%>
+# prune the forgotten snapshots above (in bulk)
+restic prune <%= $prune_args %>
+<%- } %>
