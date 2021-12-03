@@ -1,0 +1,16 @@
+<%- |
+  String $config_path,
+  String $args = '',
+| -%>
+#!/bin/sh
+
+# source our config variables so the restic command below gets the right options
+source <%= $config_path %>
+
+# get a list of hosts
+RESTIC_SNAPSHOT_HOSTS=$(restic snapshots --json | jq '.[].hostname' | sort | uniq | tr -d '"')
+
+# for each host, delete old snapshots
+for RESTIC_HOST in $RESTIC_SNAPSHOT_HOSTS; do
+  restic forget --host "$RESTIC_HOST" <%= $args %>
+done

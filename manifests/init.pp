@@ -8,6 +8,7 @@ class restic (
   Optional[String] $client_repo  = $restic::params::client_repo,
   Boolean $server                = $restic::params::server,
   Enum['rest'] $server_type      = $restic::params::server_type,
+  String $repo_ensure            = $restic::params::repo_ensure,
   Boolean $repo_manage           = $restic::params::repo_manage,
 ) inherits restic::params {
   contain restic::repo

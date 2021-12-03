@@ -1,4 +1,5 @@
 class restic::repo (
+  String $ensure = $restic::repo_ensure,
   Boolean $manage = $restic::repo_manage,
 ) inherits restic {
   if $manage and $facts['os']['family'] == 'RedHat' {
@@ -7,6 +8,7 @@ class restic::repo (
     $os_maj = $facts['os']['release']['major']
 
     yumrepo { $repo_name:
+      ensure              => $ensure,
       descr               => 'Copr repo for restic owned by copart',
       baseurl             => "https://download.copr.fedorainfracloud.org/results/copart/restic/epel-${os_maj}-\$basearch/",
       skip_if_unavailable => 'true',
@@ -24,7 +26,7 @@ class restic::repo (
     }
     $settings_hash.each |$setting, $value| {
       ini_setting { "${repo_path}:${repo_name}:${setting}":
-        ensure            => present,
+        ensure            => $ensure,
         path              => $repo_path,
         section           => $repo_name,
         setting           => $setting,

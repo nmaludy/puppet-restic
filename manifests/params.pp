@@ -2,6 +2,7 @@
 class restic::params {
   # yum/deb repo
   $repo_manage = true
+  $repo_ensure = 'present'
 
   # client
   $client = true
