@@ -76,8 +76,8 @@ define restic::server::snapshot_cleanup (
       $memo
     }
   }
-  $args_str = ($args_arr + $global_args_arr + [$_extra_args]).join(' ')
-  $prune_args_str = ($global_args_arr).join(' ')
+  $args_str = ($args_arr + $global_args_arr + [$_global_args, $_extra_args]).join(' ')
+  $prune_args_str = ($global_args_arr + [$_global_args]).join(' ')
 
   file { $script_path:
     ensure    => file,
