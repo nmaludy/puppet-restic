@@ -19,6 +19,7 @@ class restic::client::config (
   String $excludes_path = "${dir}/excludes.txt",
   String $excludes_template = 'restic/etc/restic/excludes.txt.epp',
   Array[String] $excludes = $restic::client::excludes,
+  Optional[String] $cache_dir = $restic::client::cache_dir,
   String $log_dir = '/var/log/restic',
   String $logrotate_path = '/etc/logrotate.d/restic',
   String $logrotate_template = 'restic/etc/logrotate.d/restic.epp',
@@ -59,6 +60,15 @@ class restic::client::config (
     group   => $group,
     mode    => $mode,
     content => epp($excludes_template, { excludes => $excludes }),
+  }
+
+  if $cache_dir {
+    file { $cache_dir:
+      ensure => directory,
+      owner  => $owner,
+      group  => $group,
+      mode   => $dir_mode,
+    }
   }
 
   file { $logrotate_path:

@@ -10,7 +10,7 @@ class restic::repo (
     yumrepo { $repo_name:
       ensure              => $ensure,
       descr               => 'Copr repo for restic owned by copart',
-      baseurl             => "https://download.copr.fedorainfracloud.org/results/copart/restic/epel-${os_maj}-\$basearch/",
+      baseurl             => "https://download.copr.fedorainfracloud.org/results/copart/restic/epel-\$releasever-\$basearch/",
       skip_if_unavailable => 'true',
       gpgcheck            => '1',
       gpgkey              => 'https://download.copr.fedorainfracloud.org/results/copart/restic/pubkey.gpg',

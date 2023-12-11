@@ -2,6 +2,7 @@
   String $backup_path,
   String $config_path,
   Optional[String] $excludes_path = undef,
+  Optional[String] $cache_dir = undef,
   Optional[String] $extra_args = undef,
 |-%>
 #!/bin/bash
@@ -76,6 +77,9 @@ executeScriptsInDir "$PRE_DIR"
 restic backup --verbose \
 <%- if $excludes_path { -%>
        --exclude-file <%= $excludes_path %> \
+<%- } -%>
+<%- if $cache_dir { -%>
+       --cache_dir <%= $cache_dir %> \
 <%- } -%>
 <%- if $extra_args { -%>
        <%= $extra_args %> \

@@ -1,7 +1,8 @@
 # common parameters
 class restic::params {
   # yum/deb repo
-  $repo_manage = true
+  # we don't need custom repo for RHEL, since it uses EPEL
+  $repo_manage = false
   $repo_ensure = 'present'
 
   # client
@@ -11,6 +12,7 @@ class restic::params {
   $client_repo = undef
   $client_repo_password = undef
   $client_excludes = []
+  $client_cache_dir = undef # defaults to ~/.cache/restic
 
   # server
   $server = false

@@ -10,6 +10,7 @@ define restic::client::backup (
   String $log_path = "${log_dir}/${name}.log",
   String $config_path = $restic::client::config::config_path,
   String $excludes_path = $restic::client::config::excludes_path,
+  Optional[String] $cache_dir = $restic::client::config::cache_dir,
   String $script_path = "${dir}/${name}.sh",
   Optional[Variant[Array[String], String]] $extra_args = undef,
   Boolean $manage_cron = true,
@@ -38,6 +39,7 @@ define restic::client::backup (
       config_path   => $config_path,
       extra_args    => $_extra_args,
       excludes_path => $excludes_path,
+      cache_dir     => $cache_dir,
     }),
   }
 
